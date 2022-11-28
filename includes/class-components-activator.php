@@ -37,7 +37,7 @@ class Components_Activator {
         global $wpdb;
         $charset_collate = $wpdb->get_charset_collate();
         $table_name = $wpdb->prefix . 'components';
-        $sql="CREATE TABLE IF NOT EXISTS Zi6w2ai2T_components (
+        $sql="CREATE TABLE IF NOT EXISTS $table_name (
             meta_id BIGINT(20) NOT NULL AUTO_INCREMENT,
             parent_id BIGINT(20) NOT NULL DEFAULT '0',
             component_id BIGINT(20) NOT NULL DEFAULT '0',
