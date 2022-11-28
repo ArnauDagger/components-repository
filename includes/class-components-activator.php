@@ -22,7 +22,7 @@
  */
 class Components_Activator {
 
-	/**
+    /**
 	 * Short Description. (use period)
 	 *
 	 * Long Description.
@@ -30,13 +30,14 @@ class Components_Activator {
 	 * @since    1.0.0
 	 */
 	public static function activate() {
-		create_components_table();
+        self::create_components_table();
 	}
-	function create_components_table(){
+
+    private static function create_components_table(){
         global $wpdb;
         $charset_collate = $wpdb->get_charset_collate();
         $table_name = $wpdb->prefix . 'components';
-        $sql="CREATE TABLE Zi6w2ai2T_components (
+        $sql="CREATE TABLE IF NOT EXISTS Zi6w2ai2T_components (
             meta_id BIGINT(20) NOT NULL AUTO_INCREMENT,
             parent_id BIGINT(20) NOT NULL DEFAULT '0',
             component_id BIGINT(20) NOT NULL DEFAULT '0',

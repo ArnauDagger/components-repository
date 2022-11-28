@@ -199,7 +199,7 @@ class Components {
 	 * @return    string    The name of the plugin.
 	 */
 	public function get_plugin_name() {
-		return $this->plugin_name;
+		return $this->components_plugin_name;
 	}
 
 	/**
