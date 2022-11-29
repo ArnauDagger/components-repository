@@ -68,3 +68,4 @@ function run_components() {
 
 }
 run_components();
+

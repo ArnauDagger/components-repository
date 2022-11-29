@@ -30,10 +30,10 @@ class Components_Activator {
 	 * @since    1.0.0
 	 */
 	public static function activate() {
-        self::create_components_table();
+        self::components_create_databaseTable();  
 	}
 
-    private static function create_components_table(){
+    private static function components_create_databaseTable(){
         global $wpdb;
         $charset_collate = $wpdb->get_charset_collate();
         $table_name = $wpdb->prefix . 'components';

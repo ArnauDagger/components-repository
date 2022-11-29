@@ -84,7 +84,7 @@ class Components {
 		$this->set_locale();
 		$this->define_admin_hooks();
 		$this->define_public_hooks();
-
+        
 	}
 
 	/**
@@ -160,10 +160,12 @@ class Components {
 	private function define_admin_hooks() {
 
 		$plugin_admin = new Components_Admin( $this->get_plugin_name(), $this->get_version() );
-
+		//Enqueue scripts and styles
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
-
+		//Enqueue functions to create "Components" custom tab at product's admin page
+		$this->loader->add_filter( 'woocommerce_product_data_tabs', $plugin_admin, 'components_add_tab', 99 , 1 );
+		$this->loader->add_action( 'woocommerce_product_data_panels', $plugin_admin, 'components_create_tab' );
 	}
 
 	/**
