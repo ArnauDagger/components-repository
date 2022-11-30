@@ -1,6 +1,14 @@
 (function( $ ) {
 	'use strict';
-
+	/**
+	 * Remove the item from the Components List in the product's admin page
+	 */
+	$( window ).load(function() {
+		$('.component_listItem_delete').on('click', function() {
+			console.log("Inside component_listItem_delete onClick function");
+			$(this).parent('p').remove();
+		});
+	});
 	/**
 	 * All of the code for your Dashboard-specific JavaScript source
 	 * should reside in this file.
@@ -28,5 +36,5 @@
 	 * for any particular page. Though other scripts in WordPress core, other plugins, and other themes may
 	 * be doing this, we should try to minimize doing that in our own work.
 	 */
-
+	
 })( jQuery );

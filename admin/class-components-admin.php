@@ -122,7 +122,7 @@ class Components_Admin {
 	function components_create_tab(){
 		global $woocommerce, $post;
 		?>
-		<div id="components_data" class="panel woocommerce_options_panel" style="border-bottom: 1px solid #eee;">
+		<div id="components_data" class="panel woocommerce_options_panel">
 			<?php
 			woocommerce_wp_text_input( 
 				array( 
@@ -169,13 +169,14 @@ class Components_Admin {
 				)
 			);
 			?>
+			<input type="submit" value="Añadir" class="button button-primary button-large" name="component_add_to_list">
 			<hr>
 			<div id="components_list" style="padding:5px 20px 5px 13px;">
-				<p>Item: 1 | Descripción: Hitch A01-68-80 | Cantidad: 1  Referencia: 11-03-10.R1<button id="component_item_1" class="component_listItem_delete"></button></p>
-				<p>Item: 2 | Descripción: Shaft sleeve | Cantidad: 1  Referencia: 11-01-28-02.R1<button id="component_item_2" class="component_listItem_delete"></button></p>
-				<p>Item: 3 | Descripción: Screw M6x16 | Cantidad: 3  Referencia: DIN7991-M6x16<button id="component_item_3" class="component_listItem_delete"></button></p>
-				<p>Item: 4 | Descripción: Screw M20x70 | Cantidad: 8  Referencia: DIN912-M20x70_8.8<button id="component_item_4" class="component_listItem_delete"></button></p>
-				<p>Item: 5 | Descripción: Split lock washer 127B | Cantidad: 8  Referencia: DIN127B-M20<button id="component_item_5" class="component_listItem_delete"></button></p>
+				<p>Item: 1 | Descripción: Hitch A01-68-80 | Cantidad: 1  Referencia: 11-03-10.R1<button id="component_item_1" class="component_listItem_delete" type="button"></button></p>
+				<p>Item: 2 | Descripción: Shaft sleeve | Cantidad: 1  Referencia: 11-01-28-02.R1<button id="component_item_2" class="component_listItem_delete" type="button"></button></p>
+				<p>Item: 3 | Descripción: Screw M6x16 | Cantidad: 3  Referencia: DIN7991-M6x16<button id="component_item_3" class="component_listItem_delete" type="button"></button></p>
+				<p>Item: 4 | Descripción: Screw M20x70 | Cantidad: 8  Referencia: DIN912-M20x70_8.8<button id="component_item_4" class="component_listItem_delete" type="button"></button></p>
+				<p>Item: 5 | Descripción: Split lock washer 127B | Cantidad: 8  Referencia: DIN127B-M20<button id="component_item_5" class="component_listItem_delete" type="button"></button></p>
 			</div>
 		</div>
 	<?php
