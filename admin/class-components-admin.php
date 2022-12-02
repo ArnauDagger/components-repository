@@ -97,6 +97,7 @@ class Components_Admin {
 		 */
 
 		wp_enqueue_script( $this->name, plugin_dir_url( __FILE__ ) . 'js/components-admin.js', array( 'jquery' ), $this->version, FALSE );
+		wp_localize_script( $this->name, "components_ajax_url", admin_url( "admin-ajax.php" ) );
 
 	}
 
@@ -121,8 +122,9 @@ class Components_Admin {
 	 */
 	function components_create_tab(){
 		global $woocommerce, $post;
+		
 		?>
-		<div id="components_data" class="panel woocommerce_options_panel" style="border-bottom: 1px solid #eee;">
+		<div id="components_data" class="panel woocommerce_options_panel">
 			<?php
 			woocommerce_wp_text_input( 
 				array( 
@@ -137,7 +139,7 @@ class Components_Admin {
 					'id'          			=> '_component_item', 
 					'label'       			=> __( 'Item', 'woocommerce' ), 
 					'desc_tip'    			=> 'true',
-					'placeholder' 			=> '1',
+					'value' 				=> '1',
 					'description' 			=> __( 'Introduce el número de ítem de este componente', 'woocommerce' ),
 					'type'		  			=> 'number',
 					'custom_attributes' 	=> array(
@@ -151,7 +153,7 @@ class Components_Admin {
 					'id'          			=> '_component_quantity', 
 					'label'       			=> __( 'Cantidad', 'woocommerce' ), 
 					'desc_tip'    			=> 'true',
-					'placeholder' 			=> '1',
+					'value' 				=> '1',
 					'description' 			=> __( 'Cantidad total presente de este componente en el recambio', 'woocommerce' ),
 					'type'		  			=> 'number',
 					'custom_attributes' 	=> array(
@@ -171,14 +173,69 @@ class Components_Admin {
 			?>
 			<hr>
 			<div id="components_list" style="padding:5px 20px 5px 13px;">
-				<p>Item: 1 | Descripción: Hitch A01-68-80 | Cantidad: 1  Referencia: 11-03-10.R1<button id="component_item_1" class="component_listItem_delete"></button></p>
-				<p>Item: 2 | Descripción: Shaft sleeve | Cantidad: 1  Referencia: 11-01-28-02.R1<button id="component_item_2" class="component_listItem_delete"></button></p>
-				<p>Item: 3 | Descripción: Screw M6x16 | Cantidad: 3  Referencia: DIN7991-M6x16<button id="component_item_3" class="component_listItem_delete"></button></p>
-				<p>Item: 4 | Descripción: Screw M20x70 | Cantidad: 8  Referencia: DIN912-M20x70_8.8<button id="component_item_4" class="component_listItem_delete"></button></p>
-				<p>Item: 5 | Descripción: Split lock washer 127B | Cantidad: 8  Referencia: DIN127B-M20<button id="component_item_5" class="component_listItem_delete"></button></p>
+			<?php
+				/**
+				 * Dynamically generate the components list by taking all the entries asociated to the actual
+				 * product page ID inside the database.
+				 */
+				$components_array = self::components_initialize_list($post->ID);
+				if ( $components_array ){
+					foreach ( $components_array as $component ){
+						echo "<p>Item: " . $component['item'] . " | Descripción: " . $component['component_name'] . " | Cantidad: " . $component['quantity'] . " | Referencia: "
+						 . $component['component_sku'] . "<button type='button' id='component-meta-id_" . $component['meta_id'] . "' class='component_listItem_delete'></button></p>";
+					}
+				}	
+				?>
 			</div>
 		</div>
 	<?php
 	}
 
+	/**
+	 * Handles AJAX call to delete a component
+	 *
+	 * @since    1.0.0
+	 * @access   public
+	 * @var      int    $meta_id    The meta_id number from the component to be deleted
+	 * @var      array  $response   The result of the function to be passed to the jQuery AJAX caller
+	 */
+	public function components_delete_item_at_database(){
+		$meta_id = isset( $_REQUEST['button_meta_id'] ) ? $_REQUEST['button_meta_id'] : "";
+		$response = array( 'status'=>4,'msg'=>'Parametro invalido' );
+		if( !empty( $meta_id ) ){
+			global $wpdb;
+			$table_name = $wpdb->prefix . 'components';
+			$status = $wpdb->delete(
+				$table_name,
+				array(
+					'meta_id' => $meta_id
+				)
+			);
+			if($status) {
+				$response = array( 'status'=>1,'msg'=>'Se ha borrado correctamente el componente en la base de datos' );
+			} else {
+				$response = array( 'status'=>2,'msg'=>'Ha ocurrido un error al borrar el componente en la base de datos' );
+			}
+		}
+		echo json_encode( $response );
+		wp_die();
+	}
+
+	/**
+	 * Gets all the components registered in the datrabase for the current product
+	 *
+	 * @since    1.0.0
+	 * @access   private
+	 * @param    int        $parent_id    The id of the current product page
+	 * @var      array      $result       The list of all the components related to the actual product
+	 */
+	private static function components_initialize_list($parent_id){
+		global $wpdb;
+		$table_name = $wpdb->prefix . 'components';
+		$result = $wpdb->get_results( "SELECT * FROM $table_name WHERE parent_id = $parent_id ORDER BY item ASC", ARRAY_A );
+		return $result;
+	}
+
 }
+
+

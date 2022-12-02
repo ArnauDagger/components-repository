@@ -1,6 +1,37 @@
 (function( $ ) {
 	'use strict';
+	$( window ).load( function() {
+		/**
+		 * Button "X" in the components list onClick definition
+		 * Function: Delete component from list and database
+		 */
+		$( '.component_listItem_delete').on( 'click', function() {
+			const clicked_element = $( this ).parent( 'p' );
+			let text = $( this ).attr( 'id' );
+			const splitter = text.split( "_" );
+			var id = splitter[1];
+			var data = {
+				'action': 'components_delete_item_at_database',
+				'button_meta_id': id
+			};
+			// AJAX call to delete the component at the database table
+			$.ajax({
+				url: components_ajax_url,
+				type: 'POST',
+				dataType: "json",
+				data: data,
+				success: function(response){
+					if( response.status == 1 ){
+						console.log( "Se ha borrado correctamente el componente en la base de datos" );
+						clicked_element.remove(); 
+						console.log( "Se ha borrado correctamente el componente de la lista" );
+					} else { alert( "DELETE ERROR: " + data.msg ); }
+				}
+			});
 
+		});
+		
+	});
 	/**
 	 * All of the code for your Dashboard-specific JavaScript source
 	 * should reside in this file.
