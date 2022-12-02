@@ -58,15 +58,6 @@ class Components {
 	protected $version;
 
 	/**
-	 * The array containing the components that make up the spare part
-	 *
-	 * @since    1.0.0
-	 * @access   protected
-	 * @var      string    $components_array    The array containing the components
-	 */
-	protected $components_array =[];
-
-	/**
 	 * Define the core functionality of the plugin.
 	 *
 	 * Set the plugin name and the plugin version that can be used throughout the plugin.
@@ -166,6 +157,8 @@ class Components {
 		//Enqueue functions to create "Components" custom tab at product's admin page
 		$this->loader->add_filter( 'woocommerce_product_data_tabs', $plugin_admin, 'components_add_tab', 99 , 1 );
 		$this->loader->add_action( 'woocommerce_product_data_panels', $plugin_admin, 'components_create_tab' );
+		// Ajax request handler
+		$this->loader->add_action( "wp_ajax_components_delete_item_at_database", $plugin_admin, "components_delete_item_at_database" );
 	}
 
 	/**
