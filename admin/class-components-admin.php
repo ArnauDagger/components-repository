@@ -97,7 +97,7 @@ class Components_Admin {
 		 */
 
 		wp_enqueue_script( $this->name, plugin_dir_url( __FILE__ ) . 'js/components-admin.js', array( 'jquery' ), $this->version, FALSE );
-		wp_localize_script( $this->name, "components_ajax_url", admin_url( "admin-ajax.php" ) );
+		wp_localize_script( $this->name, "components_ajax_url", array( admin_url( "admin-ajax.php" ) ) );
 
 	}
 
@@ -125,52 +125,57 @@ class Components_Admin {
 		
 		?>
 		<div id="components_data" class="panel woocommerce_options_panel">
-			<?php
-			woocommerce_wp_text_input( 
-				array( 
-					'id'          => '_component_name', 
-					'label'       => __( 'Descripción', 'woocommerce' ), 
-					'desc_tip'    => 'true',
-					'description' => __( 'Introduce el nombre completo del componente', 'woocommerce' )
-				)
-			);
-			woocommerce_wp_text_input( 
-				array( 
-					'id'          			=> '_component_item', 
-					'label'       			=> __( 'Item', 'woocommerce' ), 
-					'desc_tip'    			=> 'true',
-					'value' 				=> '1',
-					'description' 			=> __( 'Introduce el número de ítem de este componente', 'woocommerce' ),
-					'type'		  			=> 'number',
-					'custom_attributes' 	=> array(
-												'step' => 'any',
-												'min'  => '1'
-												)
-				)
-			);
-			woocommerce_wp_text_input( 
-				array( 
-					'id'          			=> '_component_quantity', 
-					'label'       			=> __( 'Cantidad', 'woocommerce' ), 
-					'desc_tip'    			=> 'true',
-					'value' 				=> '1',
-					'description' 			=> __( 'Cantidad total presente de este componente en el recambio', 'woocommerce' ),
-					'type'		  			=> 'number',
-					'custom_attributes' 	=> array(
-												'step' => 'any',
-												'min'  => '1'
-												)
-				)
-			);
-			woocommerce_wp_text_input( 
-				array( 
-					'id'          => '_component_sku', 
-					'label'       => __( 'SKU', 'woocommerce' ), 
-					'desc_tip'    => 'true',
-					'description' => __( 'La referencia SKU de este componente', 'woocommerce' )
-				)
-			);
-			?>
+				<?php
+				woocommerce_wp_text_input( 
+					array( 
+						'id'          => '_component_name', 
+						'name'		  => 'component_name',
+						'label'       => __( 'Descripción', 'woocommerce' ), 
+						'desc_tip'    => 'true',
+						'description' => __( 'Introduce el nombre completo del componente', 'woocommerce' )
+					)
+				);
+				woocommerce_wp_text_input( 
+					array( 
+						'id'          			=> '_component_item', 
+						'name' 					=> 'component_item',
+						'label'       			=> __( 'Item', 'woocommerce' ), 
+						'desc_tip'    			=> 'true',
+						'value' 				=> '1',
+						'description' 			=> __( 'Introduce el número de ítem de este componente', 'woocommerce' ),
+						'type'		  			=> 'number',
+						'custom_attributes' 	=> array(
+													'step' => 'any',
+													'min'  => '1'
+													)
+					)
+				);
+				woocommerce_wp_text_input( 
+					array( 
+						'id'          			=> '_component_quantity', 
+						'name' 					=> 'component_quantity',
+						'label'       			=> __( 'Cantidad', 'woocommerce' ), 
+						'desc_tip'    			=> 'true',
+						'value' 				=> '1',
+						'description' 			=> __( 'Cantidad total presente de este componente en el recambio', 'woocommerce' ),
+						'type'		  			=> 'number',
+						'custom_attributes' 	=> array(
+													'step' => 'any',
+													'min'  => '1'
+													)
+					)
+				);
+				woocommerce_wp_text_input( 
+					array( 
+						'id'          => '_component_sku', 
+						'name'		  => 'component_sku',
+						'label'       => __( 'SKU', 'woocommerce' ), 
+						'desc_tip'    => 'true',
+						'description' => __( 'La referencia SKU de este componente', 'woocommerce' )
+					)
+				);
+				?>
+				<button class="button button-large" id="_component_insert" name="component_insert" type="button" style="margin-left: 10px;">Añadir Componente</button>
 			<hr>
 			<div id="components_list" style="padding:5px 20px 5px 13px;">
 			<?php
@@ -189,6 +194,21 @@ class Components_Admin {
 			</div>
 		</div>
 	<?php
+	}
+
+	/**
+	 * Gets all the components registered in the datrabase for the current product
+	 *
+	 * @since    1.0.0
+	 * @access   private
+	 * @param    int        $parent_id    The id of the current product page
+	 * @var      array      $result       The list of all the components related to the actual product
+	 */
+	private static function components_initialize_list($parent_id){
+		global $wpdb;
+		$table_name = $wpdb->prefix . 'components';
+		$result = $wpdb->get_results( "SELECT * FROM $table_name WHERE parent_id = $parent_id ORDER BY item ASC", ARRAY_A );
+		return $result;
 	}
 
 	/**
@@ -211,7 +231,7 @@ class Components_Admin {
 					'meta_id' => $meta_id
 				)
 			);
-			if($status) {
+			if( $status ) {
 				$response = array( 'status'=>1,'msg'=>'Se ha borrado correctamente el componente en la base de datos' );
 			} else {
 				$response = array( 'status'=>2,'msg'=>'Ha ocurrido un error al borrar el componente en la base de datos' );
@@ -222,20 +242,36 @@ class Components_Admin {
 	}
 
 	/**
-	 * Gets all the components registered in the datrabase for the current product
-	 *
-	 * @since    1.0.0
-	 * @access   private
-	 * @param    int        $parent_id    The id of the current product page
-	 * @var      array      $result       The list of all the components related to the actual product
+	 * Handles AJAX call to insert a component
+	 * @since 1.0.0
+	 * @access public
+	 * @var      int    	$parent_id    	The product id number (Parent product in which the components will be associated)
+	 * @var      string     $name    		The component's name
+	 * @var      int    	$item    		The component's item number
+	 * @var      int    	$quantity    	The component's quantity number
+	 * @var      string     $sku    		The component's SKU code
 	 */
-	private static function components_initialize_list($parent_id){
+	public function components_insert_manage(){
 		global $wpdb;
 		$table_name = $wpdb->prefix . 'components';
-		$result = $wpdb->get_results( "SELECT * FROM $table_name WHERE parent_id = $parent_id ORDER BY item ASC", ARRAY_A );
-		return $result;
+		$parent_id = isset( $_REQUEST['parent_id'] ) ? $_REQUEST['parent_id'] : "";
+		$name = isset( $_REQUEST['name'] ) ? $_REQUEST['name'] : "";
+		$item = isset( $_REQUEST['item'] ) ? $_REQUEST['item'] : "";
+		$quantity = isset( $_REQUEST['quantity'] ) ? $_REQUEST['quantity'] : "";
+		$sku = isset( $_REQUEST['sku'] ) ? $_REQUEST['sku'] : "";
+		$response = array( 'status'=>4,'msg'=>'Parametro invalido' );
+		// DB QUERY
+		$result = $wpdb->get_row( "SELECT EXISTS (SELECT 1 FROM $table_name 
+									WHERE parent_id=$parent_id AND 
+									item=$item AND component_sku='$sku' 
+									);", ARRAY_N );
+		$result_num = $result[0];
+		if($result_num == 0){
+			$response = array( 'status'=>1,'msg'=>'Éxito: Este componente del producto no existe' );
+		} else{ $response = array( 'status'=>2,'msg'=>'Error: Este componente del producto ya existe' ); }
+		
+		echo json_encode( $response );
+		wp_die();
 	}
 
 }
-
-
