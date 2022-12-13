@@ -173,9 +173,11 @@ class Components {
 
 		$plugin_public = new Components_Public( $this->get_plugin_name(), $this->get_version() );
 
+		//Enqueue scripts and styles
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
-
+		//Enqueue filter to modify product's description
+		$this->loader->add_filter( 'woocommerce_product_tabs', $plugin_public, 'components_new_product_tab', 98 );
 	}
 
 	/**
