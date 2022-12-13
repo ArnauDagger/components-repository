@@ -141,7 +141,7 @@ class Components_Admin {
 						'name' 					=> 'component_item',
 						'label'       			=> __( 'Item', 'woocommerce' ), 
 						'desc_tip'    			=> 'true',
-						'value' 				=> '1',
+						'value' 				=> '',
 						'description' 			=> __( 'Introduce el número de ítem de este componente', 'woocommerce' ),
 						'type'		  			=> 'number',
 						'custom_attributes' 	=> array(
@@ -202,7 +202,7 @@ class Components_Admin {
 	 * @since    1.0.0
 	 * @access   private
 	 * @param    int        $parent_id    The id of the current product page
-	 * @var      array      $result       The list of all the components related to the actual product
+	 * @return   array      $result       The list of all the components related to the actual product
 	 */
 	private static function components_initialize_list($parent_id){
 		global $wpdb;
@@ -216,8 +216,8 @@ class Components_Admin {
 	 *
 	 * @since    1.0.0
 	 * @access   public
-	 * @var      int    $meta_id    The meta_id number from the component to be deleted
-	 * @var      array  $response   The result of the function to be passed to the jQuery AJAX caller
+	 * @var      int    $meta_id    The ID of the row in the database to be deleted
+	 * @return   array  $response   The result of the function to be passed to the jQuery AJAX caller
 	 */
 	public function components_delete_item_at_database(){
 		$meta_id = isset( $_REQUEST['button_meta_id'] ) ? $_REQUEST['button_meta_id'] : "";
@@ -250,6 +250,8 @@ class Components_Admin {
 	 * @var      int    	$item    		The component's item number
 	 * @var      int    	$quantity    	The component's quantity number
 	 * @var      string     $sku    		The component's SKU code
+	 * @var		 int		$meta_id		The ID of the row in the database that associates the product with the component.
+	 * @return   array  	$response   	The result of the function to be passed to the jQuery AJAX caller
 	 */
 	public function components_insert_manage(){
 		global $wpdb;
@@ -259,16 +261,63 @@ class Components_Admin {
 		$item = isset( $_REQUEST['item'] ) ? $_REQUEST['item'] : "";
 		$quantity = isset( $_REQUEST['quantity'] ) ? $_REQUEST['quantity'] : "";
 		$sku = isset( $_REQUEST['sku'] ) ? $_REQUEST['sku'] : "";
-		$response = array( 'status'=>4,'msg'=>'Parametro invalido' );
-		// DB QUERY
+		$response = array( 'status'=>1,'msg'=>'Parametro invalido' );
+		// CHECK IF A COMPONENT WITH SAME ITEM NUMBER IS ALREADY IN DATABASE
 		$result = $wpdb->get_row( "SELECT EXISTS (SELECT 1 FROM $table_name 
 									WHERE parent_id=$parent_id AND 
-									item=$item AND component_sku='$sku' 
+									item=$item 
 									);", ARRAY_N );
 		$result_num = $result[0];
+		// ITEM NUMBER DOES NOT EXIST IN DATABASE
 		if($result_num == 0){
-			$response = array( 'status'=>1,'msg'=>'Éxito: Este componente del producto no existe' );
-		} else{ $response = array( 'status'=>2,'msg'=>'Error: Este componente del producto ya existe' ); }
+			$table_postmeta = $wpdb->prefix . 'postmeta';
+			// GET COMPONENT PRODUCT_ID FROM DATABASE
+			$component_id = $wpdb->get_var('SELECT post_id FROM '. $table_postmeta .' WHERE meta_key="_sku" AND meta_value="'. $sku .'";');
+			// COMPONENT EXISTS, PROCEEDING TO INSERT THE COMPONENT INTO THE CURRENT PRODUCT
+			if( isset($component_id) ){
+				$dataToInsert = array( 'parent_id'  =>  $parent_id, 'component_id'		=>	$component_id,
+									   'item'	  	=>	$item,		'component_name'	=>	$name,
+								       'quantity'	=>	$quantity,	'component_sku'		=>  $sku
+				);
+				$insert = $wpdb->insert( $table_name, $dataToInsert, array( '%d', '%d', '%d', '%s', '%d', '%s' )  );
+				// INSERT SUCCESS
+				if( isset( $insert ) ){
+					$response = array( 'status'=>5,'msg'=>'Éxito: Componente insertado satisfactoriamente');
+					// GET META_ID TO RETURN IT TO THE JQUERY FILE TO ADD IT TO THE LIST
+					$meta_id = $wpdb->get_var('SELECT meta_id FROM '. $table_name .' WHERE parent_id='.$parent_id.' 
+												AND component_id='.$component_id.' AND item='.$item.' 
+												AND quantity='.$quantity.' 
+												AND component_sku="'.$sku.'" 
+												AND component_name="'.$name.'";'
+					);
+					// GET META_ID SUCCESSFUL, PASSING VALUES TO JQUERY
+					if( isset( $meta_id ) ){
+						$response = array(  'status'				=>	6,
+											'msg'					=>	'Éxito: Componente insertado', 
+											'component_item'		=>	$item,
+											'component_name'		=>	$name,
+											'component_quantity'	=>	$quantity,
+											'component_sku'			=>	$sku,
+											'component_meta_id'		=>	$meta_id
+						);
+					} 
+					// GET META_ID FAILED
+					else{ $response = array( 'status'=>7,'msg'=>'Error: No se ha podido obtener el meta_id'); }
+					
+				} 
+				// INSERT FAILS
+				else {
+					$response = array( 'status'=>4,'msg'=>'Error al insertar el componente');
+				}
+			} 
+			// COMPONENT DOES NOT EXIST
+			else {
+				$response = array( 'status'=>3,'msg'=>'Error: Este componente con código SKU: '. $sku .' ; No existe. Crea primero el producto del componente para poder asociarlo.');
+				
+			}
+		}
+		//ITEM NUMBER ALREADY EXISTS IN DATABASE 
+		else{ $response = array( 'status'=>2,'msg'=>'Error: Ya existe un componente con número de Item: ' . $item ); }
 		
 		echo json_encode( $response );
 		wp_die();
