@@ -157,8 +157,9 @@ class Components {
 		//Enqueue functions to create "Components" custom tab at product's admin page
 		$this->loader->add_filter( 'woocommerce_product_data_tabs', $plugin_admin, 'components_add_tab', 99 , 1 );
 		$this->loader->add_action( 'woocommerce_product_data_panels', $plugin_admin, 'components_create_tab' );
-		// Ajax request handler
+		// Ajax request handlers
 		$this->loader->add_action( "wp_ajax_components_delete_item_at_database", $plugin_admin, "components_delete_item_at_database" );
+		$this->loader->add_action( "wp_ajax_components_insert_manage", $plugin_admin, "components_insert_manage" );
 	}
 
 	/**
