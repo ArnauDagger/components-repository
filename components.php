@@ -8,17 +8,17 @@
  * registers the activation and deactivation functions, and defines a function
  * this starts the plugin.
  *
- * @link              https://recambios.triginer.com/
+ * @link              https://github.com/ArnauDagger/components-repository
  * @since             1.0.0
  * @package           Components
  *
  * @wordpress-plugin
  * Plugin Name:       Components
- * Plugin URI:        https://recambios.triginer.com/
+ * Plugin URI:        https://github.com/ArnauDagger/components-repository
  * Description:       Plugin to automatically create a table in the description of certain products
  * Version:           1.0.0
  * Author:            Arnau Solsona
- * Author URI:        arnaudagger@gmail.com
+ * Author URI:        mailto:arnaudagger@gmail.com
  * License:           GPL-2.0+
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
  * Text Domain:       components

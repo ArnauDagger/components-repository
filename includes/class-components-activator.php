@@ -30,7 +30,8 @@ class Components_Activator {
 	 * @since    1.0.0
 	 */
 	public static function activate() {
-        self::components_create_databaseTable();  
+        self::components_create_databaseTable();
+        
 	}
 
     private static function components_create_databaseTable(){
