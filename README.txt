@@ -1,5 +1,5 @@
-=== Plugin Name ===
-Contributors:
+=== Components ===
+Contributors: Arnau Solsona
 Donate link:
 Tags: products, customize
 Requires at least: 6.0.1
@@ -8,34 +8,31 @@ Stable tag: 6.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Here is a short description of the plugin.  This should be no more than 150 characters.  No markup here.
+Plugin to autogenerate a table listing all the components of a product inside a new tab called "Components".
 
 == Description ==
 
-This is the long description.  No limit, and you can use Markdown (as well as in the following sections).
+This plugin is made for a specific page.
 
-For backwards compatibility, if this section is missing, the full length of the short description will be used, and
-Markdown parsed.
+It creates a table into de database that saves the association between a product and it's components.
 
-A few notes about the sections above:
+Then automatically generates a table listing all the components in a new tab called "Components" inside the product's front page.
 
-*   "Contributors" is a comma separated list of wp.org/wp-plugins.org usernames
-*   "Tags" is a comma separated list of tags that apply to the plugin
-*   "Requires at least" is the lowest version that the plugin will work on
-*   "Tested up to" is the highest version that you've *successfully used to test the plugin*. Note that it might work on
-higher versions... this is just the highest one you've verified.
-*   Stable tag should indicate the Subversion "tag" of the latest stable version, or "trunk," if you use `/trunk/` for
-stable.
+There are 2 versions of the listing table:
+    1) Every component in the list has an "Add to cart" button attatched to it to quickly add them into the cart without having to access the component's page.
+    2) None of the components in the list has the "Add to cart" button.
 
-    Note that the `readme.txt` of the stable tag is the one that is considered the defining one for the plugin, so
-if the `/trunk/readme.txt` file says that the stable tag is `4.3`, then it is `/tags/4.3/readme.txt` that'll be used
-for displaying information about the plugin.  In this situation, the only thing considered from the trunk `readme.txt`
-is the stable tag pointer.  Thus, if you develop in trunk, you can update the trunk `readme.txt` to reflect changes in
-your in-development version, without having that information incorrectly disclosed about the current stable version
-that lacks those changes -- as long as the trunk's `readme.txt` points to the correct stable tag.
+If the client viewing the page has a role called "NoSale" it shows the listing table version 2).
 
-    If no stable tag is provided, it is assumed that trunk is stable, but you should specify "trunk" if that's where
-you put the stable version, in order to eliminate any doubt.
+Creates 5 new user roles.
+New roles:
+    1) Descuento10 -> 10% Discount
+    2) Descuento15 -> 15% Discount
+    3) Descuento20 -> 20% Discount
+    4) Descuento25 -> 25% Discount
+    5) Descuento30 -> 30% Discount
+
+If the client making an order has any of the above roles the final price of the order gets its respective % discount.
 
 == Installation ==
 
@@ -43,19 +40,18 @@ This section describes how to install the plugin and get it working.
 
 e.g.
 
-1. Upload `plugin-name.php` to the `/wp-content/plugins/` directory
-1. Activate the plugin through the 'Plugins' menu in WordPress
-1. Place `<?php do_action('plugin_name_hook'); ?>` in your templates
+1. Upload `components` folder to the `/wp-content/plugins/` directory
+2. Activate the plugin through the 'Plugins' menu in WordPress
 
 == Frequently Asked Questions ==
 
-= A question that someone might have =
+= If i uninstall the plugin do i lose all the data inserted into the custom database table? =
 
-An answer to that question.
+Yes, uninstalling deletes the database table created by this plugin and all of it's entries.
 
-= What about foo bar? =
+= Do I have to insert every component as a product first? =
 
-Answer to foo bar dilemma.
+Yes, In order for this plugin to work you need to first create the product that then will be associated as a component to it's "parent" product.
 
 == Screenshots ==
 
@@ -68,47 +64,6 @@ directory take precedence. For example, `/assets/screenshot-1.png` would win ove
 == Changelog ==
 
 = 1.0 =
-* A change since the previous version.
-* Another change.
-
-= 0.5 =
-* List versions from most recent at top to oldest at bottom.
-
-== Upgrade Notice ==
-
-= 1.0 =
-Upgrade notices describe the reason a user should upgrade.  No more than 300 characters.
-
-= 0.5 =
-This version fixes a security related bug.  Upgrade immediately.
-
-== Arbitrary section ==
-
-You may provide arbitrary sections, in the same format as the ones above.  This may be of use for extremely complicated
-plugins where more information needs to be conveyed that doesn't fit into the categories of "description" or
-"installation."  Arbitrary sections will be shown below the built-in sections outlined above.
-
-== A brief Markdown Example ==
-
-Ordered list:
-
-1. Some feature
-1. Another feature
-1. Something else about the plugin
-
-Unordered list:
-
-* something
-* something else
-* third thing
-
-Here's a link to [WordPress](http://wordpress.org/ "Your favorite software") and one to [Markdown's Syntax Documentation][markdown syntax].
-Titles are optional, naturally.
-
-[markdown syntax]: http://daringfireball.net/projects/markdown/syntax
-            "Markdown is what the parser uses to process much of the readme file"
-
-Markdown uses email style notation for blockquotes and I've been told:
-> Asterisks for *emphasis*. Double it up  for **strong**.
+* --
 
 `<?php code(); // goes in backticks ?>`

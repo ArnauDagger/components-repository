@@ -13,11 +13,11 @@
  * @package           Components
  *
  * @wordpress-plugin
- * Plugin Name:       Components Plugin
+ * Plugin Name:       Components
  * Plugin URI:        https://recambios.triginer.com/
  * Description:       Plugin to automatically create a table in the description of certain products
  * Version:           1.0.0
- * Author:            Arnau
+ * Author:            Arnau Solsona
  * Author URI:        arnaudagger@gmail.com
  * License:           GPL-2.0+
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
