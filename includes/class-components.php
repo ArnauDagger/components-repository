@@ -172,12 +172,17 @@ class Components {
 	private function define_public_hooks() {
 
 		$plugin_public = new Components_Public( $this->get_plugin_name(), $this->get_version() );
-
 		//Enqueue scripts and styles
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
 		//Enqueue filter to modify product's description
 		$this->loader->add_filter( 'woocommerce_product_tabs', $plugin_public, 'components_new_product_tab', 98 );
+		//Enqueue filter to make products purchasable or not
+		$this->loader->add_filter( 'woocommerce_is_purchasable', $plugin_public, 'purshasabale_course', 10, 2 );
+		//Enqueue filters to hide prices to users with role NoSale
+		$this->loader->add_filter( 'woocommerce_get_price_html', $plugin_public, 'hide_prices' );
+		$this->loader->add_filter( 'woocommerce_cart_item_price', $plugin_public, '__return_false' );
+		$this->loader->add_filter( 'woocommerce_cart_item_subtotal', $plugin_public, '__return_false' );
 	}
 
 	/**
