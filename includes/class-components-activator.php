@@ -30,9 +30,24 @@ class Components_Activator {
 	 * @since    1.0.0
 	 */
 	public static function activate() {
-        self::components_create_databaseTable();  
+        self::components_create_databaseTable(); 
+        self::components_create_user_roles();
 	}
 
+    /**
+     * Creates 5 user roles with the same capabilities than customer
+     */
+    private static function components_create_user_roles(){
+        add_role( 'descuento10', 'Descuento 10', get_role( 'customer' )->capabilities );
+        add_role( 'descuento15', 'Descuento 15', get_role( 'customer' )->capabilities );
+        add_role( 'descuento20', 'Descuento 20', get_role( 'customer' )->capabilities );
+        add_role( 'descuento25', 'Descuento 25', get_role( 'customer' )->capabilities );
+        add_role( 'descuento30', 'Descuento 30', get_role( 'customer' )->capabilities );
+    }
+
+    /**
+     * Creates the database table needed for the plugin to work
+     */
     private static function components_create_databaseTable(){
         global $wpdb;
         $charset_collate = $wpdb->get_charset_collate();

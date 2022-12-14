@@ -152,8 +152,38 @@ class Components_Public {
 		}
 		return $price; // Return original price
 	}
-	
-}
+
+	/**
+	 * Apply respective discounts for the new roles
+	 * @param	object	$cart	Contains all the cart information
+	 */
+	function discount_based_on_user_role( $cart ){
+		$percentage;
+		if ( is_admin() && ! defined( 'DOING_AJAX' ) ){
+			return; // Exit
+		}
+
+		//Only to the specific roles
+		if ( current_user_can('descuento10') ){
+			$percentage = 10;
+		} else if( current_user_can('descuento15') ){
+			$percentage = 15;
+		} else if( current_user_can('descuento20') ){
+			$percentage = 20;
+		} else if( current_user_can('descuento25') ){
+			$percentage = 25;
+		} else if( current_user_can('descuento30') ){
+			$percentage = 30;
+		}
+
+		// Applying discount
+		if( isset( $percentage ) ){
+			$discount = $cart->get_subtotal() * $percentage / 100; // Calculation
+			$cart->add_fee( sprintf( __("Discount (%s)", "woocommerce"), $percentage . '%'), -$discount, true );
+		}
+	}
+}//CLASS END
+
 /**
  * Checks if the product has components associated to it
  * @param	array	$product	The product to be checked
@@ -309,5 +339,3 @@ function createComponentsTableSale($componentsArray){
 	
 	return $setComponentsTable;
 }
-
-
