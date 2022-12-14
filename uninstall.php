@@ -40,3 +40,9 @@ delete_site_option( $option_name );
 // Drop the custom database table
 global $wpdb;
 $wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}components" );
+
+remove_role( 'descuento10' );
+remove_role( 'descuento15' );
+remove_role( 'descuento20' );
+remove_role( 'descuento25' );
+remove_role( 'descuento30' );

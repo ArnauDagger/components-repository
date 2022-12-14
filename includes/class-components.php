@@ -181,6 +181,8 @@ class Components {
 		$this->loader->add_filter( 'woocommerce_is_purchasable', $plugin_public, 'purshasabale_course', 10, 2 );
 		//Enqueue filters to hide prices to users with role NoSale
 		$this->loader->add_filter( 'woocommerce_get_price_html', $plugin_public, 'hide_prices' );
+		//Enqueue action to apply discounts per user role
+		$this->loader->add_action( 'woocommerce_cart_calculate_fees', $plugin_public, 'discount_based_on_user_role', 20, 1 );
 	}
 
 	/**
